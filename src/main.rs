@@ -1,5 +1,5 @@
 use image;
-use rqrr;
+use zbar_rust::ZBarImageScanner;
 use std::fs::File;
 use std::io::Write;
 use opencv::videoio;
@@ -10,7 +10,7 @@ use opencv::imgcodecs;
 fn main(){
     println!("let's make some noise...");
     //todo: CLI parameters for input and output files
-    
+
     //initialize output file
     let mut base64out = File::create("/home/blues/test64out.txt").unwrap();
     //load the source video
@@ -29,17 +29,21 @@ fn main(){
         let buffer = imagebuffer.to_vec();
         // get the image library to load the buffer and convert it to the format needed for QR grid detection
         let img = image::load_from_memory_with_format(&buffer, image::ImageFormat::Png).unwrap().to_luma8();
-        // Prepare for detection
-        let mut img = rqrr::PreparedImage::prepare(img);
-        // Search for grids, without decoding
-        let grids = img.detect_grids();
-        //make sure a grid is found before continuing
-        assert_eq!(grids.len(), 1);
-        // Decode the grid
-        let (_meta, content) = grids[0].decode().unwrap();
-        //add decoded base64 line to buffer
-        print!("{}", content);
-        write!(&mut base64out, "{}", content);
+        let (width, height) = img.dimensions();
+
+        let luma_img = img;
+
+        let luma_img_data: Vec<u8> = luma_img.to_vec();
+
+        let mut scanner = ZBarImageScanner::new();
+
+        let results = scanner.scan_y800(&luma_img_data, width, height).unwrap();
+
+        for result in results {
+            let content = String::from_utf8(result.data).unwrap();
+            print!("{}", content);
+            write!(&mut base64out, "{}", content);
+        }
         //grab the next frame, or exit loop
         frame = Mat::default();
         frame_read_success = video_file.read(&mut frame).unwrap();
