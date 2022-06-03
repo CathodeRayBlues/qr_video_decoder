@@ -2,19 +2,23 @@ use image;
 use zbar_rust::ZBarImageScanner;
 use std::fs::File;
 use std::io::Write;
+use std::env;
 use opencv::videoio;
 use opencv::videoio::prelude::*;
 use opencv::core::*;
 use opencv::imgcodecs;
 
 fn main(){
+    let args: Vec<String> = env::args().collect();
+    let input = &args[1];
+    let output = &args[2];
     println!("let's make some noise...");
     //todo: CLI parameters for input and output files
 
     //initialize output file
-    let mut base64out = File::create("/home/blues/test64out.txt").unwrap();
+    let mut base64out = File::create(output).unwrap();
     //load the source video
-    let mut video_file = videoio::VideoCapture::from_file("/home/blues/frames/test.mp4", videoio::CAP_FFMPEG).unwrap();
+    let mut video_file = videoio::VideoCapture::from_file(input, videoio::CAP_FFMPEG).unwrap();
     
     //grab the first frame
     let mut frame = Mat::default();
@@ -28,8 +32,6 @@ fn main(){
         //make the image buffer
         let mut imagebuffer : opencv::core::Vector<u8> = opencv::core::Vector::new();
         let mut image_params : opencv::core::Vector<i32> = opencv::core::Vector::new();
-        //image_params.push(opencv::imgcodecs::IMWRITE_PAM_FORMAT_GRAYSCALE as i32);
-        //image_params.push(1);
         let mut gray = Mat::default();
 			opencv::imgproc::cvt_color(
 				&frame,
