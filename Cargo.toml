@@ -1,0 +1,11 @@
+[package]
+name = "qr_video_decoder"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rqrr = "0.5.1"
+image = "0.24.2"
+opencv = "0.64.1"
