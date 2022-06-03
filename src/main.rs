@@ -24,19 +24,19 @@ fn main(){
         //make the image buffer
         let mut imagebuffer : opencv::core::Vector<u8> = opencv::core::Vector::new();
         let mut image_params : opencv::core::Vector<i32> = opencv::core::Vector::new();
-        let _image_encode_success = imgcodecs::imencode(".bmp", &frame, &mut imagebuffer, &mut image_params);
+        image_params.push(opencv::imgcodecs::IMWRITE_PAM_FORMAT_GRAYSCALE as i32);
+        let _image_encode_success = imgcodecs::imencode(".pnm", &frame, &mut imagebuffer, &mut image_params);
         //convert opencv buffer type to standard vec
         let buffer = imagebuffer.to_vec();
         // get the image library to load the buffer and convert it to the format needed for QR grid detection
-        let img = image::load_from_memory_with_format(&buffer, image::ImageFormat::Bmp).unwrap().to_luma8();
-        let (width, height) = img.dimensions();
+        let img = image::load_from_memory_with_format(&buffer, image::ImageFormat::Pnm).unwrap().to_luma8();
+        let width = video_file.get(videoio::CAP_PROP_FRAME_WIDTH).unwrap() as u32;
+        let height = video_file.get(videoio::CAP_PROP_FRAME_HEIGHT).unwrap() as u32;
 
-        let luma_img = img;
 
-        let luma_img_data: Vec<u8> = luma_img.to_vec();
+        let luma_img_data: Vec<u8> = img.to_vec();
 
         let mut scanner = ZBarImageScanner::new();
-
         let results = scanner.scan_y800(&luma_img_data, width, height).unwrap();
 
         for result in results {
