@@ -24,11 +24,11 @@ fn main(){
         //make the image buffer
         let mut imagebuffer : opencv::core::Vector<u8> = opencv::core::Vector::new();
         let mut image_params : opencv::core::Vector<i32> = opencv::core::Vector::new();
-        let _image_encode_success = imgcodecs::imencode(".png", &frame, &mut imagebuffer, &mut image_params);
+        let _image_encode_success = imgcodecs::imencode(".bmp", &frame, &mut imagebuffer, &mut image_params);
         //convert opencv buffer type to standard vec
         let buffer = imagebuffer.to_vec();
         // get the image library to load the buffer and convert it to the format needed for QR grid detection
-        let img = image::load_from_memory_with_format(&buffer, image::ImageFormat::Png).unwrap().to_luma8();
+        let img = image::load_from_memory_with_format(&buffer, image::ImageFormat::Bmp).unwrap().to_luma8();
         let (width, height) = img.dimensions();
 
         let luma_img = img;
@@ -52,5 +52,3 @@ fn main(){
     base64out.flush().unwrap();
     
 }
-
-
