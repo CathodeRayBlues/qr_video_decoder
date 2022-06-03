@@ -2,3 +2,6 @@
 
 Decodes a video which there is a QR code every frame into a base64 text file.
 NOT FINISHED YET.
+
+usage: 
+qr_video_decoder [input file] [output file]
