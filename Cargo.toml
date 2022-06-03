@@ -8,4 +8,3 @@ edition = "2021"
 [dependencies]
 zbar-rust = "0.0.19"
 opencv = "0.64.1"
-image = "0.24.2"
